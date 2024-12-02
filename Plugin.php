@@ -12,12 +12,12 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 }
 
 /**
- * 管理后台右上角的欢迎语设置
+ * 管理后台右上角的欢迎语及保存按键码设置
  *
  * @package HelloWorld
  * @author yuesha
- * @version 1.0.0
- * @link http://typecho.org
+ * @version 1.0.1
+ * @link https://hw13.cn
  */
 class Plugin implements PluginInterface
 {
@@ -27,6 +27,8 @@ class Plugin implements PluginInterface
     public static function activate()
     {
         \Typecho\Plugin::factory('admin/menu.php')->navBar = __CLASS__ . '::render';
+        \Typecho\Plugin::factory('admin/write-js.php')->write = __CLASS__ . '::contentWriteJs';
+        return _t('插件已激活，请前往设置');
     }
 
     /**
@@ -45,7 +47,10 @@ class Plugin implements PluginInterface
     {
         /** 分类名称 */
         $name = new Text('word', null, '欢迎您，尊敬的管理员', _t('管理后台右上角的欢迎语'));
+        /** 保存的快捷键码 */
+        $saveKeyCode = new Text('saveKeyCode', null, '83', _t('新增或编辑文章时保存的快捷键码，先按Ctrl'));
         $form->addInput($name);
+        $form->addInput($saveKeyCode);
     }
 
     /**
@@ -65,8 +70,43 @@ class Plugin implements PluginInterface
      */
     public static function render()
     {
-        echo '<span class="message success">'
-            . htmlspecialchars(Options::alloc()->plugin('HelloWorld')->word)
-            . '</span>';
+        $helloWorld = Options::alloc()->plugin('HelloWorld')->word;
+        $helloWorld = htmlspecialchars($helloWorld);
+
+        echo "<span class=\"message success\">{$helloWorld}</span>";
+    }
+
+    /**
+     * 插件实现文章页面内js附加代码
+     *
+     * @access public
+     * @return void
+     */
+    public static function contentWriteJs()
+    {
+        $saveKeyCode = Options::alloc()->plugin('HelloWorld')->saveKeyCode;
+
+        $jsCode = "
+            // Ctrl+S时调起保存
+            document.onkeydown = function () {
+                // 过滤非组合键监听
+                if (window.event.ctrlKey && window.event.keyCode == {$saveKeyCode}) {
+                    event.keyCode = 0;
+                    event.returnValue = false;
+
+                    // 模拟点击
+                    btnSave.click();
+                }
+            }
+            // 默认关闭自定义字段
+            setTimeout(() => {\$('#custom-field-expand a').click();}, 1000)
+        ";
+
+        echo '<script type="text/javascript">';
+        echo '$(document).ready(function() {';
+        echo 'let btnSave = $("#btn-save");';
+        echo $jsCode;
+        echo '});';
+        echo '</script>';
     }
 }

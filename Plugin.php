@@ -5,6 +5,7 @@ namespace TypechoPlugin\HelloWorld;
 use Typecho\Plugin\PluginInterface;
 use Typecho\Widget\Helper\Form;
 use Typecho\Widget\Helper\Form\Element\Text;
+use Typecho\Widget\Helper\Form\Element\Radio;
 use Widget\Options;
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
@@ -49,8 +50,11 @@ class Plugin implements PluginInterface
         $name = new Text('word', null, '欢迎您，尊敬的管理员', _t('管理后台右上角的欢迎语'));
         /** 保存的快捷键码 */
         $saveKeyCode = new Text('saveKeyCode', null, '83', _t('新增或编辑文章时保存的快捷键码，先按Ctrl'));
+        /** 文章编辑-是否自动点击自定义字段菜单 */
+        $clickField = new Radio('clickField', [0 => '关闭', 1 => '开启'], 0, _t('新增或编辑文章时是否自动点击自定义字段菜单'));
         $form->addInput($name);
         $form->addInput($saveKeyCode);
+        $form->addInput($clickField);
     }
 
     /**
@@ -85,6 +89,7 @@ class Plugin implements PluginInterface
     public static function contentWriteJs()
     {
         $saveKeyCode = Options::alloc()->plugin('HelloWorld')->saveKeyCode;
+        $clickField = Options::alloc()->plugin('HelloWorld')->clickField;
 
         $jsCode = "
             // Ctrl+S时调起保存
@@ -98,6 +103,8 @@ class Plugin implements PluginInterface
                     btnSave.click();
                 }
             }
+        ";
+        if ($clickField) $jsCode .= "
             // 默认关闭自定义字段
             setTimeout(() => {\$('#custom-field-expand a').click();}, 1000)
         ";

@@ -55,11 +55,14 @@ class Plugin implements PluginInterface
         $clickField = new Radio('clickField', [0 => '关闭', 1 => '开启'], 0, _t('新增或编辑文章时是否自动点击自定义字段菜单'));
         /** 文章编辑-是否自动开启全屏 */
         $openFullScreen = new Radio('openFullScreen', [0 => '关闭', 1 => '开启'], 1, _t('新增或编辑文章时是否自动开启全屏'));
+        /** 文章编辑-是否自动开启大纲目录 */
+        $openCatalogue = new Radio('openCatalogue', [0 => '关闭', 1 => '开启'], 1, _t('新增或编辑文章时是否自动开启大纲目录'));
 
         $form->addInput($name);
         $form->addInput($saveKeyCode);
         $form->addInput($clickField);
         $form->addInput($openFullScreen);
+        $form->addInput($openCatalogue);
     }
 
     /**
@@ -96,6 +99,7 @@ class Plugin implements PluginInterface
         $saveKeyCode = Options::alloc()->plugin('HelloWorld')->saveKeyCode;
         $clickField = Options::alloc()->plugin('HelloWorld')->clickField;
         $openFullScreen = Options::alloc()->plugin('HelloWorld')->openFullScreen;
+        $openCatalogue = Options::alloc()->plugin('HelloWorld')->openCatalogue;
 
         $jsCode = "
             // Ctrl+S时调起保存
@@ -116,10 +120,12 @@ class Plugin implements PluginInterface
                 $('#custom-field-expand a').click();
         ";
         if ($openFullScreen) $jsCode .= "
-                // 开启大纲
-                $('[data-type=outline]')[0].click();
                 // 开启全屏
                 $('[data-type=fullscreen]')[0].click();
+        ";
+        if ($openCatalogue) $jsCode .= "
+                // 开启大纲
+                $('[data-type=outline]')[0].click();
         ";
         $jsCode .= "}, 1000);";
 

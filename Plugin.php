@@ -6,6 +6,7 @@ use Typecho\Plugin\PluginInterface;
 use Typecho\Widget\Helper\Form;
 use Typecho\Widget\Helper\Form\Element\Text;
 use Typecho\Widget\Helper\Form\Element\Radio;
+use Typecho\Widget\Helper\Form\Element\Select;
 use Widget\Options;
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
@@ -46,11 +47,48 @@ class Plugin implements PluginInterface
      */
     public static function config(Form $form)
     {
-        $keyCodes = [65 => 'Ctrl + A', 66 => 'Ctrl + B', 67 => 'Ctrl + C', 68 => 'Ctrl + D', 69 => 'Ctrl + E', 70 => 'Ctrl + F', 71 => 'Ctrl + G', 72 => 'Ctrl + H', 73 => 'Ctrl + I', 74 => 'Ctrl + J', 75 => 'Ctrl + K', 76 => 'Ctrl + L', 77 => 'Ctrl + M', 78 => 'Ctrl + N', 79 => 'Ctrl + O', 80 => 'Ctrl + P', 81 => 'Ctrl + Q', 82 => 'Ctrl + R', 83 => 'Ctrl + S', 84 => 'Ctrl + T', 85 => 'Ctrl + U', 86 => 'Ctrl + V', 87 => 'Ctrl + W', 88 => 'Ctrl + X', 89 => 'Ctrl + Y', 90 => 'Ctrl + Z', 48 => 'Ctrl + 0(顶部)', 49 => 'Ctrl + 1(顶部)', 50 => 'Ctrl + 2(顶部)', 51 => 'Ctrl + 3(顶部)', 52 => 'Ctrl + 4(顶部)', 53 => 'Ctrl + 5(顶部)', 54 => 'Ctrl + 6(顶部)', 55 => 'Ctrl + 7(顶部)', 56 => 'Ctrl + 8(顶部)', 57 => 'Ctrl + 9(顶部)'];
+        $keyCodes = [
+            65 => 'Ctrl + A',
+            66 => 'Ctrl + B',
+            67 => 'Ctrl + C',
+            68 => 'Ctrl + D',
+            69 => 'Ctrl + E',
+            70 => 'Ctrl + F',
+            71 => 'Ctrl + G',
+            72 => 'Ctrl + H',
+            73 => 'Ctrl + I',
+            74 => 'Ctrl + J',
+            75 => 'Ctrl + K',
+            76 => 'Ctrl + L',
+            77 => 'Ctrl + M',
+            78 => 'Ctrl + N',
+            79 => 'Ctrl + O',
+            80 => 'Ctrl + P',
+            81 => 'Ctrl + Q',
+            82 => 'Ctrl + R',
+            83 => 'Ctrl + S',
+            84 => 'Ctrl + T',
+            85 => 'Ctrl + U',
+            86 => 'Ctrl + V',
+            87 => 'Ctrl + W',
+            88 => 'Ctrl + X',
+            89 => 'Ctrl + Y',
+            90 => 'Ctrl + Z',
+            48 => 'Ctrl + 0(顶部)',
+            49 => 'Ctrl + 1(顶部)',
+            50 => 'Ctrl + 2(顶部)',
+            51 => 'Ctrl + 3(顶部)',
+            52 => 'Ctrl + 4(顶部)',
+            53 => 'Ctrl + 5(顶部)',
+            54 => 'Ctrl + 6(顶部)',
+            55 => 'Ctrl + 7(顶部)',
+            56 => 'Ctrl + 8(顶部)',
+            57 => 'Ctrl + 9(顶部)'
+        ];
         /** 分类名称 */
         $name = new Text('word', null, '欢迎您，尊敬的管理员', _t('管理后台右上角的欢迎语'));
         /** 保存的快捷键码 */
-        $saveKeyCode = new Radio('saveKeyCode', $keyCodes, 83, _t('新增或编辑文章时保存的快捷键码'));
+        $saveKeyCode = new Select('saveKeyCode', $keyCodes, 83, _t('新增或编辑文章时保存的快捷键码') );
         /** 文章编辑-是否自动点击自定义字段菜单 */
         $clickField = new Radio('clickField', [0 => '关闭', 1 => '开启'], 0, _t('新增或编辑文章时是否自动点击自定义字段菜单'));
         /** 文章编辑-是否自动开启全屏 */

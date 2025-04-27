@@ -1,6 +1,6 @@
 <?php
 
-namespace TypechoPlugin\HelloWorld;
+namespace TypechoPlugin\HwPreference;
 
 use Typecho\Plugin\PluginInterface;
 use Typecho\Widget\Helper\Form;
@@ -14,9 +14,9 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 }
 
 /**
- * 管理后台右上角的欢迎语及保存按键码设置
+ * hw的偏好设置插件
  *
- * @package HelloWorld
+ * @package HwPreference
  * @author yuesha
  * @version 1.0.1
  * @link https://hw13.cn
@@ -90,9 +90,9 @@ class Plugin implements PluginInterface
         /** 保存的快捷键码 */
         $saveKeyCode = new Select('saveKeyCode', $keyCodes, 83, _t('新增或编辑文章时保存的快捷键码') );
         /** 文章编辑-是否自动点击自定义字段菜单 */
-        $clickField = new Radio('clickField', [0 => '关闭', 1 => '开启'], 0, _t('新增或编辑文章时是否自动点击自定义字段菜单'));
+        $clickField = new Radio('clickField', [0 => '关闭', 1 => '开启'], 1, _t('新增或编辑文章时是否自动点击自定义字段菜单'));
         /** 文章编辑-是否自动开启全屏 */
-        $openFullScreen = new Radio('openFullScreen', [0 => '关闭', 1 => '开启'], 1, _t('新增或编辑文章时是否自动开启全屏'));
+        $openFullScreen = new Radio('openFullScreen', [0 => '关闭', 1 => '开启'], 0, _t('新增或编辑文章时是否自动开启全屏'));
         /** 文章编辑-是否自动开启大纲目录 */
         $openCatalogue = new Radio('openCatalogue', [0 => '关闭', 1 => '开启'], 1, _t('新增或编辑文章时是否自动开启大纲目录'));
 
@@ -120,10 +120,10 @@ class Plugin implements PluginInterface
      */
     public static function render()
     {
-        $helloWorld = Options::alloc()->plugin('HelloWorld')->word;
-        $helloWorld = htmlspecialchars($helloWorld);
+        $hwPreference = Options::alloc()->plugin('HwPreference')->word;
+        $hwPreference = htmlspecialchars($hwPreference);
 
-        echo "<span class=\"message success\">{$helloWorld}</span>";
+        echo "<span class=\"message success\">{$hwPreference}</span>";
     }
 
     /**
@@ -134,10 +134,10 @@ class Plugin implements PluginInterface
      */
     public static function contentWriteJs()
     {
-        $saveKeyCode = Options::alloc()->plugin('HelloWorld')->saveKeyCode;
-        $clickField = Options::alloc()->plugin('HelloWorld')->clickField;
-        $openFullScreen = Options::alloc()->plugin('HelloWorld')->openFullScreen;
-        $openCatalogue = Options::alloc()->plugin('HelloWorld')->openCatalogue;
+        $saveKeyCode = Options::alloc()->plugin('HwPreference')->saveKeyCode;
+        $clickField = Options::alloc()->plugin('HwPreference')->clickField;
+        $openFullScreen = Options::alloc()->plugin('HwPreference')->openFullScreen;
+        $openCatalogue = Options::alloc()->plugin('HwPreference')->openCatalogue;
 
         $jsCode = "
             // Ctrl+S时调起保存
@@ -147,8 +147,8 @@ class Plugin implements PluginInterface
                     event.keyCode = 0;
                     event.returnValue = false;
 
-                    // 模拟点击
-                    btnSave.click();
+                    // 调用系统默认的保存功能
+                    window.syncSaveContentData();
                 }
             }
             setTimeout(() => {

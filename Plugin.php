@@ -7,6 +7,7 @@ use Typecho\Widget\Helper\Form;
 use Typecho\Widget\Helper\Form\Element\Text;
 use Typecho\Widget\Helper\Form\Element\Radio;
 use Typecho\Widget\Helper\Form\Element\Select;
+use Typecho\Widget\Helper\Form\Element\Textarea;
 use Widget\Options;
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
@@ -28,9 +29,14 @@ class Plugin implements PluginInterface
      */
     public static function activate()
     {
-        \Typecho\Plugin::factory('admin/menu.php')->navBar = __CLASS__ . '::render';
+        \Typecho\Plugin::factory('admin/menu.php')->navBar = __CLASS__ . '::menuNavBar';
         \Typecho\Plugin::factory('admin/write-js.php')->write = __CLASS__ . '::contentWriteJs';
+        \Typecho\Plugin::factory('admin/index.php')->quickBtn = __CLASS__ . '::indexQuickBtns';
         return _t('插件已激活，请前往设置');
+    }
+
+    public static function render()
+    {
     }
 
     /**
@@ -95,12 +101,14 @@ class Plugin implements PluginInterface
         $openFullScreen = new Radio('openFullScreen', [0 => '关闭', 1 => '开启'], 0, _t('新增或编辑文章时是否自动开启全屏'));
         /** 文章编辑-是否自动开启大纲目录 */
         $openCatalogue = new Radio('openCatalogue', [0 => '关闭', 1 => '开启'], 1, _t('新增或编辑文章时是否自动开启大纲目录'));
-
+        /** 首页-展示快捷链接 */
+        $indexBtns = new Textarea('indexBtns', null, 'https://tongji.baidu.com,百度统计', _t('后台首页展示的快捷按钮'), _t('一行一个链接，先链接，英文逗号，再跟着标题，如下：<br />https://tongji.baidu.com,百度统计<br />https://www.baidu.com,百度<br><b style="color:red;">注意：此功能需要修改admin/index.php文件</b>'));
         $form->addInput($name);
         $form->addInput($saveKeyCode);
         $form->addInput($clickField);
         $form->addInput($openFullScreen);
         $form->addInput($openCatalogue);
+        $form->addInput($indexBtns);
     }
 
     /**
@@ -118,7 +126,7 @@ class Plugin implements PluginInterface
      * @access public
      * @return void
      */
-    public static function render()
+    public static function menuNavBar()
     {
         $hwPreference = Options::alloc()->plugin('HwPreference')->word;
         $hwPreference = htmlspecialchars($hwPreference);
@@ -173,5 +181,30 @@ class Plugin implements PluginInterface
         echo $jsCode;
         echo '});';
         echo '</script>';
+    }
+
+    public static function indexQuickBtns()
+    {
+        $indexBtns = Options::alloc()->plugin('HwPreference')->indexBtns;
+        if (empty($indexBtns)) return [];
+
+        $btns = explode("\n", trim($indexBtns));
+        if (empty($btns)) return [];
+
+        $returnData = [];
+        foreach ($btns as $btn) {
+            $btn = trim($btn);
+            if (empty($btn)) continue;
+
+            $expBtn = explode(',', $btn);
+            if (count($expBtn) != 2) continue;
+
+            $returnData[] = [
+                'href' => $expBtn[0],
+                'title' => $expBtn[1],
+            ];
+        }
+
+        return $returnData;
     }
 }

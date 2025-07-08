@@ -9,6 +9,7 @@ use Typecho\Widget\Helper\Form\Element\Radio;
 use Typecho\Widget\Helper\Form\Element\Select;
 use Typecho\Widget\Helper\Form\Element\Textarea;
 use Widget\Options;
+use Typecho_Widget;
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
     exit;
@@ -103,7 +104,7 @@ class Plugin implements PluginInterface
         $openCatalogue = new Radio('openCatalogue', [0 => '关闭', 1 => '开启'], 1, _t('新增或编辑文章时是否自动开启大纲目录'));
         /** 首页-展示快捷链接 */
         $indexBtns = new Textarea('indexBtns', null, 'https://tongji.baidu.com,百度统计', _t('后台首页展示的快捷按钮'), _t('
-            一行一个链接
+            一行一个链接，可以写网站根路径，会自动拼接域名
             先链接，英文逗号，再跟着标题，英文逗号，再跟着跳转方式，如下：<br />
             https://tongji.baidu.com,百度统计,_blank<br />
             https://www.baidu.com,百度,_self<br>
@@ -190,6 +191,7 @@ class Plugin implements PluginInterface
 
     public static function indexQuickBtns()
     {
+        $options = Typecho_Widget::widget('Widget_Options');
         $indexBtns = Options::alloc()->plugin('HwPreference')->indexBtns;
         if (empty($indexBtns)) return [];
 
@@ -204,13 +206,16 @@ class Plugin implements PluginInterface
             $expBtn = explode(',', $btn);
             if (count($expBtn) < 2) continue;
 
-            $returnData[] = [
-                'href' => $expBtn[0] ?? 'https://hw13.cn',
-                'title' => $expBtn[1] ?? '测试标题',
-                'target' => $expBtn[2] ?? '_blank',
-            ];
+            $href = $expBtn[0] ?? 'https://hw13.cn';
+            // 如果是本站链接，就拼上本站域名
+            if (strpos($href, '/') === 0) $href = $options->adminUrl . $href;
+
+            $title = $expBtn[1] ?? '测试标题';
+            $target = $expBtn[2] ?? '_blank';
+
+            echo sprintf('<li><a target="%s" href="%s">%s</a></li>', $target, $href, _t($title));
         }
 
-        return $returnData;
+        return true;
     }
 }

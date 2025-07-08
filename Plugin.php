@@ -102,7 +102,7 @@ class Plugin implements PluginInterface
         /** 文章编辑-是否自动开启大纲目录 */
         $openCatalogue = new Radio('openCatalogue', [0 => '关闭', 1 => '开启'], 1, _t('新增或编辑文章时是否自动开启大纲目录'));
         /** 首页-展示快捷链接 */
-        $indexBtns = new Textarea('indexBtns', null, 'https://tongji.baidu.com,百度统计', _t('后台首页展示的快捷按钮'), _t('一行一个链接，先链接，英文逗号，再跟着标题，如下：<br />https://tongji.baidu.com,百度统计<br />https://www.baidu.com,百度<br><b style="color:red;">注意：此功能需要修改admin/index.php文件</b>'));
+        $indexBtns = new Textarea('indexBtns', null, 'https://tongji.baidu.com,百度统计', _t('后台首页展示的快捷按钮'), _t('一行一个链接，先链接，英文逗号，再跟着标题，如下：<br />https://tongji.baidu.com,百度统计<br />https://www.baidu.com,百度<br><b style="color:red;">前置条件：需要修改admin/index.php文件完成适配</b>'));
         $form->addInput($name);
         $form->addInput($saveKeyCode);
         $form->addInput($clickField);

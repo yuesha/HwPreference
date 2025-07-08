@@ -207,8 +207,8 @@ class Plugin implements PluginInterface
             if (count($expBtn) < 2) continue;
 
             $href = $expBtn[0] ?? 'https://hw13.cn';
-            // 如果是本站链接，就拼上本站域名
-            if (strpos($href, '/') === 0) $href = $options->siteUrl . $href;
+            // 如果是本站链接，就拼上本站域名，并且去掉/
+            if (strpos($href, '/') === 0) $href = $options->siteUrl . trim($href, '/');
 
             $title = $expBtn[1] ?? '测试标题';
             $target = $expBtn[2] ?? '_blank';
